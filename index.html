@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vista</title>
+    <script src="lib/vue.js"></script>
+    <script src="lib/toml.js"></script>
+    <script src="js/pathparser.js"></script>
+    <script src="js/vista.js"></script>
+    <link rel="stylesheet" href="lib-css/bootstrap.min.css" />
+  </head>
+  <body>
+    <!-- declare the initial state with TOML (https://github.com/toml-lang/toml) -->
+    <script type="vista-model" app="my-app">
+# Users state
+
+[newUser]
+username = ""
+twitter = "@"
+
+[users.mariano]
+username = "marianoguerra"
+twitter = "@warianoguerra"
+
+[users.javier]
+username = "javierdallamore"
+twitter = "@javierdallamore"
+
+# TODO state
+
+[newToDo]
+title = ""
+
+[[todos]]
+title = "Conquer the World"
+
+[[todos]]
+title = "Buy Milk"
+    </script>
+    <!-- logic can be extracted to a script tag -->
+    <script type="vista-logic">
+      {
+         addToDo: (title) => {
+           $append('todos', {title: title});
+           $setField('newToDo.title', '');
+         }
+      }
+    </script>
+    <div id="my-app">
+      <div class="mb-3" style="width: 50%; margin-left: 25%">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input v-model="newUser.username" id="username" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="twitter">Twitter</label>
+          <input v-model="newUser.twitter" class="form-control">
+        </div>
+        <div class="text-center">
+          <!-- logic can be written inline -->
+          <button v-on:click="$add('users[newUser.username]', {username: newUser.username, twitter: newUser.twitter}); $setField('newUser.username', ''); $setField('newUser.twitter', '@');" class="btn btn btn-primary">+</button>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-striped table-hover"
+             style="width: 50%; margin-left: 25%">
+        <tbody>
+          <tr v-for="(user, key) in users">
+            <td>{{user.username}}</td>
+            <td><a :href="'https://twitter.com/' + user.twitter">{{user.twitter}}</a></td>
+            <td class="text-center"><button v-on:click="$remove('users[$key]', {key: key})" class="btn btn-sm btn-danger">X</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="mb-3" style="width: 50%; margin-left: 25%">
+        <div class="form-group">
+          <label for="todo-title">To Do</label>
+          <input v-model="newToDo.title" placeholder="Task Description" id="todo-title" class="form-control">
+        </div>
+        <div class="text-center">
+          <button v-on:click="addToDo(newToDo.title)" class="btn btn-primary">+</button>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-striped table-hover"
+             style="width: 50%; margin-left: 25%">
+        <tr v-for="(todo, index) in todos">
+          <td>{{todo.title}}</td>
+          <td class="text-center"><button v-on:click="$remove('todos[$index]', {index: index})" class="btn btn-sm btn-danger">X</button></td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

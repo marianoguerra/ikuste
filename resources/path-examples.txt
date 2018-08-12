@@ -1,0 +1,24 @@
+foo
+foo.bar
+foo.bar.baz
+ foo . bar . baz  
+[foo]
+ [ foo ]  
+[foo][bar]
+[foo].bar
+foo[bar]
+foo[bar].baz
+foo[bar.asd].baz
+[foo.bar].baz
+foo[bar.baz]
+  foo[ bar.baz ] 
+[5]
+foo[5]
+foo[bar.baz[1]][2]
+[$i]
+[$i][$j]
+foo[$i]
+[$i].foo
+foo[$i][2]
+foo[$i][bar]
+0a
