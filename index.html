@@ -2,16 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Vista</title>
+    <title>Ikuste</title>
     <script src="lib/vue.js"></script>
     <script src="lib/toml.js"></script>
     <script src="js/pathparser.js"></script>
-    <script src="js/vista.js"></script>
+    <script src="js/ikuste.js"></script>
     <link rel="stylesheet" href="lib-css/bootstrap.min.css" />
   </head>
   <body>
     <!-- declare the initial state with TOML (https://github.com/toml-lang/toml) -->
-    <script type="vista-model" app="my-app">
+    <script type="ikuste-model" app="my-app">
 # Users state
 
 [newUser]
@@ -38,7 +38,7 @@ title = "Conquer the World"
 title = "Buy Milk"
     </script>
     <!-- logic can be extracted to a script tag -->
-    <script type="vista-logic">
+    <script type="ikuste-logic">
       {
          addToDo: (title) => {
            $append('todos', {title: title});

@@ -13,7 +13,7 @@
   }
 
   function getModelTag() {
-    const nodes = document.querySelectorAll('script[type="vista-model"]');
+    const nodes = document.querySelectorAll('script[type="ikuste-model"]');
 
     if (nodes.length === 0) {
       return null;
@@ -174,11 +174,11 @@
   function getDefaultMethods() {
     return {
       $add: function(path, value, bindings) {
-          const scope = new Scope(bindings),
-              compiledPath = parsePath(path),
-              info = compiledPath(scope, this),
-              node = info.ok ? info.parent : null,
-              key = info.ok ? info.lastKey : null;
+        const scope = new Scope(bindings),
+          compiledPath = parsePath(path),
+          info = compiledPath(scope, this),
+          node = info.ok ? info.parent : null,
+          key = info.ok ? info.lastKey : null;
 
         if (Array.isArray(node)) {
           logCantAddToList(node, path, key);
@@ -189,10 +189,10 @@
         }
       },
       $append: function(path, value, bindings) {
-          const scope = new Scope(bindings),
-              compiledPath = parsePath(path),
-              info = compiledPath(scope, this),
-              node = info.ok ? info.node : null;
+        const scope = new Scope(bindings),
+          compiledPath = parsePath(path),
+          info = compiledPath(scope, this),
+          node = info.ok ? info.node : null;
 
         if (Array.isArray(node)) {
           node.push(value);
@@ -201,22 +201,22 @@
         }
       },
       $setField: function(path, value, bindings) {
-          const scope = new Scope(bindings),
-              compiledPath = parsePath(path),
-              info = compiledPath(scope, this),
-              node = info.ok ? info.parent : null,
-              key = info.ok ? info.lastKey : null;
+        const scope = new Scope(bindings),
+          compiledPath = parsePath(path),
+          info = compiledPath(scope, this),
+          node = info.ok ? info.parent : null,
+          key = info.ok ? info.lastKey : null;
 
         if (node) {
           Vue.set(node, key, value);
         }
       },
       $remove: function(path, bindings) {
-          const scope = new Scope(bindings),
-              compiledPath = parsePath(path),
-              info = compiledPath(scope, this),
-              node = info.ok ? info.parent : null,
-              field = info.ok ? info.lastKey : null;
+        const scope = new Scope(bindings),
+          compiledPath = parsePath(path),
+          info = compiledPath(scope, this),
+          node = info.ok ? info.parent : null,
+          field = info.ok ? info.lastKey : null;
 
         if (Array.isArray(node)) {
           if (typeof field === 'number') {
@@ -239,7 +239,7 @@
 
   function setupApp(model, appNodeId) {
     console.log(
-      'initializing vista app @ ',
+      'initializing ikuste app @ ',
       appNodeId,
       'with model',
       jsonClone(model)
@@ -248,24 +248,24 @@
       defaultMethodKeys = Object.keys(methods);
 
     document
-      .querySelectorAll('script[type="vista-logic"]')
+      .querySelectorAll('script[type="ikuste-logic"]')
       .forEach(function(node) {
         const code = node.innerText,
           fullCode =
-            'window.$vistaTmpLogic = (function () { return ' +
+            'window.$ikusteTmpLogic = (function () { return ' +
             code.trim() +
             ';}())';
         console.log('compiling logic', fullCode);
 
         try {
           eval(fullCode);
-          const logic = window.$vistaTmpLogic;
+          const logic = window.$ikusteTmpLogic;
           for (let name in logic) {
             console.log('adding', name, 'to methods');
             methods[name] = logic[name];
           }
 
-          delete window.$vistaTmpLogic;
+          delete window.$ikusteTmpLogic;
         } catch (err) {
           console.error('error compiling logic', err);
         }
@@ -290,7 +290,7 @@
   function init() {
     const model = parseModel(),
       node = getModelTag(),
-      appNodeId = node.getAttribute('app') || 'vista-app';
+      appNodeId = node.getAttribute('app') || 'ikuste-app';
 
     setupApp(model, appNodeId);
   }
