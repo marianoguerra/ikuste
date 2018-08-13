@@ -107,7 +107,7 @@
           node = node[lastKey];
           break;
         case 'm':
-          lastKey = resolvePath([lastKey], scopes, data);
+          lastKey = resolvePath(lastKey, scopes, data).node;
           node = node[lastKey];
           break;
       }
