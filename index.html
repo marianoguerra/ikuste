@@ -18,11 +18,11 @@
 username = ""
 twitter = "@"
 
-[users.mariano]
+[users.marianoguerra]
 username = "marianoguerra"
 twitter = "@warianoguerra"
 
-[users.javier]
+[users.javierdallamore]
 username = "javierdallamore"
 twitter = "@javierdallamore"
 
@@ -58,7 +58,8 @@ title = "Buy Milk"
         </div>
         <div class="text-center">
           <!-- logic can be written inline -->
-          <button v-on:click="$add('users[newUser.username]', {username: newUser.username, twitter: newUser.twitter}); $setField('newUser.username', ''); $setField('newUser.twitter', '@');" class="btn btn btn-primary">+</button>
+          <button v-on:click="$add('users[newUser.username]', {username: newUser.username, twitter: newUser.twitter}); $setField('newUser.username', ''); $setField('newUser.twitter', '@');"
+            class="btn btn btn-primary">+</button>
         </div>
       </div>
 
@@ -67,8 +68,13 @@ title = "Buy Milk"
         <tbody>
           <tr v-for="(user, key) in users">
             <td>{{user.username}}</td>
-            <td><a :href="'https://twitter.com/' + user.twitter">{{user.twitter}}</a></td>
-            <td class="text-center"><button v-on:click="$remove('users[$key]', {key: key})" class="btn btn-sm btn-danger">X</button></td>
+            <td>
+              <a :href="'https://twitter.com/' + user.twitter">{{user.twitter}}</a>
+            </td>
+            <td class="text-center">
+                <button v-on:click="$remove('users[$key]', {key: key})"
+                    class="btn btn-sm btn-danger">X</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -76,10 +82,14 @@ title = "Buy Milk"
       <div class="mb-3" style="width: 50%; margin-left: 25%">
         <div class="form-group">
           <label for="todo-title">To Do</label>
-          <input v-model="newToDo.title" placeholder="Task Description" id="todo-title" class="form-control">
+          <input v-model="newToDo.title"
+                 placeholder="Task Description"
+                 id="todo-title"
+                 class="form-control">
         </div>
         <div class="text-center">
-          <button v-on:click="addToDo(newToDo.title)" class="btn btn-primary">+</button>
+          <button v-on:click="addToDo(newToDo.title)"
+              class="btn btn-primary">+</button>
         </div>
       </div>
 
@@ -87,7 +97,10 @@ title = "Buy Milk"
              style="width: 50%; margin-left: 25%">
         <tr v-for="(todo, index) in todos">
           <td>{{todo.title}}</td>
-          <td class="text-center"><button v-on:click="$remove('todos[$index]', {index: index})" class="btn btn-sm btn-danger">X</button></td>
+          <td class="text-center">
+              <button v-on:click="$remove('todos[$index]', {index: index})"
+                  class="btn btn-sm btn-danger">X</button>
+          </td>
         </tr>
       </table>
     </div>
