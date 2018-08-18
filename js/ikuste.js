@@ -152,6 +152,13 @@
           logCantAppendToNonList(node, path);
         }
       },
+      $getField: function(path, defaultValue, bindings) {
+        const scope = new Scope(bindings),
+              compiledPath = parsePath(path),
+              info = compiledPath(scope, this);
+
+          return info.ok ? info.node : defaultValue;
+      },
       $setField: function(path, value, bindings) {
         const scope = new Scope(bindings),
           compiledPath = parsePath(path),
