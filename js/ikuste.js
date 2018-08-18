@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /*globals Vue, parser*/
-(function() {
+// eslint-disable-next-line
+;(function() {
   'use strict';
 
   function Scope(bindings, parent) {
