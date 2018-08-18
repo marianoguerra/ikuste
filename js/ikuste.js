@@ -1,56 +1,7 @@
 /* eslint-disable no-console */
-/*globals toml, Vue, parser*/
+/*globals Vue, parser*/
 (function() {
   'use strict';
-
-  function parseModelText(text) {
-    try {
-      const result = toml.parse(text);
-      return {ok: true, data: result};
-    } catch (e) {
-      return {ok: false, error: e};
-    }
-  }
-
-  function getModelTag() {
-    const nodes = document.querySelectorAll('script[type="ikuste-model"]');
-
-    if (nodes.length === 0) {
-      return null;
-    }
-    {
-      return nodes[0];
-    }
-  }
-
-  function getModelTagContent() {
-    const node = getModelTag();
-    if (node === null) {
-      return '';
-    } else {
-      return node.innerText;
-    }
-  }
-
-  function parseModel() {
-    const modelText = getModelTagContent(),
-      parseResult = parseModelText(modelText);
-
-    if (parseResult.ok) {
-      return parseResult.data;
-    } else {
-      const e = parseResult.error;
-      alert(
-        'Parsing error on line ' +
-          e.line +
-          ', column ' +
-          e.column +
-          ': ' +
-          e.message
-      );
-      return {};
-    }
-  }
 
   function Scope(bindings, parent) {
     this.parent = parent || null;
@@ -237,43 +188,81 @@
     };
   }
 
-  function setupApp(model, appNodeId) {
+  function setupApps() {
+    const methods = getDefaultMethods(),
+      defaultMethodKeys = Object.keys(methods),
+      node = document.querySelectorAll('script[type="ikuste"]')[0];
+
+    if (!node) {
+      alert('ikuste node not found');
+      return;
+    }
+
+    const code = node.innerText,
+      fullCode =
+        'window.$ikusteTmp = (function () { return ' + code.trim() + ';}())';
+
+    console.log('compiling logic', fullCode);
+
+    let appInfo;
+    try {
+      eval(fullCode);
+      appInfo = window.$ikusteTmp;
+
+      delete window.$ikusteTmp;
+    } catch (err) {
+      console.error(
+        'error compiling ikuste, at line',
+        err.lineNumber,
+        'code at line: ',
+        fullCode[err.lineNumber],
+        err
+      );
+      for (let key in err) {
+        console.log(key, err[key]);
+      }
+      return;
+    }
+
+    if (!appInfo) {
+      alert('ikuste app info not found');
+      return;
+    }
+
+    const userMethods = appInfo.methods || {};
+
+    for (let name in userMethods) {
+      console.log('adding', name, 'to methods');
+      methods[name] = userMethods[name];
+    }
+
+    if (typeof appInfo.data !== 'object') {
+      alert('ikuste app data not found');
+      return;
+    }
+
+    const appNodeId0 = node.getAttribute('app') || appInfo.el || 'app',
+          appNodeId = appNodeId0[0] === '#' ? appNodeId0 : '#' + appNodeId0,
+      appNode = document.getElementById(appNodeId.replace('#', '')),
+      data = appInfo.data;
+
+    if (!appNode) {
+      alert(
+        'ikuste app node (id "' +
+          appNodeId0 +
+          '") not found, make sure you set the id attribute on a node in your HTML'
+      );
+    }
     console.log(
       'initializing ikuste app @ ',
-      appNodeId,
+      appNodeId0,
       'with model',
-      jsonClone(model)
+      jsonClone(data), appInfo
     );
-    const methods = getDefaultMethods(),
-      defaultMethodKeys = Object.keys(methods);
-
-    document
-      .querySelectorAll('script[type="ikuste-logic"]')
-      .forEach(function(node) {
-        const code = node.innerText,
-          fullCode =
-            'window.$ikusteTmpLogic = (function () { return ' +
-            code.trim() +
-            ';}())';
-        console.log('compiling logic', fullCode);
-
-        try {
-          eval(fullCode);
-          const logic = window.$ikusteTmpLogic;
-          for (let name in logic) {
-            console.log('adding', name, 'to methods');
-            methods[name] = logic[name];
-          }
-
-          delete window.$ikusteTmpLogic;
-        } catch (err) {
-          console.error('error compiling logic', err);
-        }
-      });
 
     const app = new Vue({
-      el: '#' + appNodeId,
-      data: model,
+      el: appNodeId,
+      data: data,
       methods: methods
     });
 
@@ -288,11 +277,7 @@
   }
 
   function init() {
-    const model = parseModel(),
-      node = getModelTag(),
-      appNodeId = node.getAttribute('app') || 'ikuste-app';
-
-    setupApp(model, appNodeId);
+    setupApps();
   }
 
   window.addEventListener('load', init);

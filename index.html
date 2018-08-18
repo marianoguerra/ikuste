@@ -4,45 +4,44 @@
     <meta charset="utf-8">
     <title>Ikuste</title>
     <script src="lib/vue.js"></script>
-    <script src="lib/toml.js"></script>
     <script src="js/pathparser.js"></script>
     <script src="js/ikuste.js"></script>
     <link rel="stylesheet" href="lib-css/bootstrap.min.css" />
   </head>
   <body>
-    <!-- declare the initial state with TOML (https://github.com/toml-lang/toml) -->
-    <script type="ikuste-model" app="my-app">
-# Users state
-
-[newUser]
-username = ""
-twitter = "@"
-
-[users.marianoguerra]
-username = "marianoguerra"
-twitter = "@warianoguerra"
-
-[users.javierdallamore]
-username = "javierdallamore"
-twitter = "@javierdallamore"
-
-# TODO state
-
-[newToDo]
-title = ""
-
-[[todos]]
-title = "Conquer the World"
-
-[[todos]]
-title = "Buy Milk"
-    </script>
-    <!-- logic can be extracted to a script tag -->
-    <script type="ikuste-logic">
+    <script type="ikuste" app="my-app">
       {
-         addToDo: (title) => {
-           $append('todos', {title: title});
-           $setField('newToDo.title', '');
+        data: {
+            // user state
+            newUser: {
+                username: "",
+                twitter: "@"
+            },
+            users: {
+                marianoguerra: {
+                    username: "marianoguerra",
+                    twitter: "@warianoguerra"
+                },
+                javierdallamore: {
+                    username: "javierdallamore",
+                    twitter: "@javiardallamore"
+                }
+            },
+            // ToDo List state
+            newToDo: {
+                title: ""
+            },
+            todos: [
+                {title: "Conquer the World"},
+                {title: "Buy Milk"}
+            ]
+        },
+        // logic can be extracted here as second step
+        methods: {
+             addToDo: (title) => {
+               $append('todos', {title: title});
+               $setField('newToDo.title', '');
+             }
          }
       }
     </script>
