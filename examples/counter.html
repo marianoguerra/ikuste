@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Ikuste Example: Counter</title>
+  <script src="../dist/ikuste.min.js"></script>
+</head>
+<body>
+  <script type="ikuste" app="my-app">
+    {data: {count: 0}}
+  </script>
+  <div id="my-app">
+    <p>Counter: <span>{{count}}</span>
+    <button @click="$setField('count', $getField('count') + 1)">Increment</button>
+  </div>
+</body>
+</html>

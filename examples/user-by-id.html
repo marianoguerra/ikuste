@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Ikuste Example: User by ID</title>
+    <script src="../dist/ikuste.min.js"></script>
+    <link rel="stylesheet" href="../lib-css/bootstrap.min.css" />
+  </head>
+  <body>
+    <script type="ikuste" app="my-app">
+      {
+        data: {
+            newUser: {
+                username: "",
+                twitter: "@"
+            },
+            users: {
+                marianoguerra: {
+                    username: "marianoguerra",
+                    twitter: "@warianoguerra"
+                },
+                javierdallamore: {
+                    username: "javierdallamore",
+                    twitter: "@javiardallamore"
+                }
+            }
+        }
+      }
+    </script>
+    <div id="my-app">
+      <div class="mb-3" style="width: 50%; margin-left: 25%">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input v-model="newUser.username" id="username" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="twitter">Twitter</label>
+          <input v-model="newUser.twitter" class="form-control">
+        </div>
+        <div class="text-center">
+          <button v-on:click="$add('users[newUser.username]', {username: newUser.username, twitter: newUser.twitter}); $setField('newUser.username', ''); $setField('newUser.twitter', '@');"
+             class="btn btn btn-primary">+</button>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-striped table-hover"
+             style="width: 50%; margin-left: 25%">
+        <tbody>
+          <tr v-for="(user, key) in users">
+            <td>{{user.username}}</td>
+            <td>
+              <a :href="'https://twitter.com/' + user.twitter">{{user.twitter}}</a>
+            </td>
+            <td class="text-center">
+              <button v-on:click="$remove('users[$key]', {key: key})"
+                class="btn btn-sm btn-danger">X</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

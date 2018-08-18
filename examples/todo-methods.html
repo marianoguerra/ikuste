@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Ikuste Example: To Do List Using Methods</title>
+    <script src="../dist/ikuste.min.js"></script>
+    <link rel="stylesheet" href="../lib-css/bootstrap.min.css" />
+  </head>
+  <body>
+    <script type="ikuste" app="my-app">
+      {
+        data: {
+            newToDo: {
+                title: ""
+            },
+            todos: [
+                {title: "Conquer the World"},
+                {title: "Buy Milk"}
+            ]
+        },
+        methods: {
+            addToDo: (title) => {
+              $append('todos', {title: title});
+              $setField('newToDo.title', '');
+            },
+            removeToDo: (index) => {
+              $remove('todos[$index]', {index: index})
+            }
+        }
+
+      }
+    </script>
+    <div id="my-app">
+      <div class="mb-3" style="width: 50%; margin-left: 25%">
+        <div class="form-group">
+          <label for="todo-title">To Do</label>
+          <input v-model="newToDo.title"
+                 placeholder="Task Description"
+                 id="todo-title"
+                 class="form-control">
+        </div>
+        <div class="text-center">
+          <button @click="addToDo(newToDo.title)"
+             class="btn btn-primary">+</button>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-striped table-hover"
+             style="width: 50%; margin-left: 25%">
+        <tr v-for="(todo, index) in todos">
+          <td>{{todo.title}}</td>
+          <td class="text-center">
+            <button @click="removeToDo(index)"
+              class="btn btn-sm btn-danger">X</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
