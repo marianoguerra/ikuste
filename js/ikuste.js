@@ -198,29 +198,27 @@
       return;
     }
 
-    const code = node.innerText,
-      fullCode =
-        'window.$ikusteTmp = (function () { return ' + code.trim() + ';}())';
-
-    console.log('compiling logic', fullCode);
-
+    const code = node.innerText.trim();
     let appInfo;
     try {
-      eval(fullCode);
-      appInfo = window.$ikusteTmp;
-
-      delete window.$ikusteTmp;
+      console.log('compiling logic', code);
+      const getDataFun = new Function('return ' + code.trim() + ';');
+      appInfo = getDataFun();
     } catch (err) {
-      console.error(
-        'error compiling ikuste, at line',
-        err.lineNumber,
-        'code at line: ',
-        fullCode[err.lineNumber],
-        err
-      );
-      for (let key in err) {
-        console.log(key, err[key]);
+      if (err.lineNumber) {
+        alert(
+          'error processing ikuste code, at line ' +
+            err.lineNumber +
+            ', code at line:\n\n' +
+            code.split('\n')[err.lineNumber] +
+            '\n\nreason: ' +
+            err
+        );
+      } else {
+        alert('error processing ikuste code: ' + err);
       }
+
+      console.error(err);
       return;
     }
 
@@ -242,7 +240,7 @@
     }
 
     const appNodeId0 = node.getAttribute('app') || appInfo.el || 'app',
-          appNodeId = appNodeId0[0] === '#' ? appNodeId0 : '#' + appNodeId0,
+      appNodeId = appNodeId0[0] === '#' ? appNodeId0 : '#' + appNodeId0,
       appNode = document.getElementById(appNodeId.replace('#', '')),
       data = appInfo.data;
 
@@ -257,7 +255,8 @@
       'initializing ikuste app @ ',
       appNodeId0,
       'with model',
-      jsonClone(data), appInfo
+      jsonClone(data),
+      appInfo
     );
 
     const app = new Vue({
