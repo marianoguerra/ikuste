@@ -200,27 +200,12 @@
 
     const code = node.innerText.trim();
     let appInfo;
-    try {
-      console.log('compiling logic', code);
-      const getDataFun = new Function('return ' + code.trim() + ';');
-      appInfo = getDataFun();
-    } catch (err) {
-      if (err.lineNumber) {
-        alert(
-          'error processing ikuste code, at line ' +
-            err.lineNumber +
-            ', code at line:\n\n' +
-            code.split('\n')[err.lineNumber] +
-            '\n\nreason: ' +
-            err
-        );
-      } else {
-        alert('error processing ikuste code: ' + err);
-      }
+    console.log('compiling logic', code);
 
-      console.error(err);
-      return;
-    }
+    window.ikusteEvalingCode = code;
+    const getDataFun = new Function('return ' + code.trim() + ';');
+    delete window.ikusteEvalingCode;
+    appInfo = getDataFun();
 
     if (!appInfo) {
       alert('ikuste app info not found');
@@ -278,6 +263,30 @@
   function init() {
     setupApps();
   }
+
+  window.addEventListener('error', function(err) {
+    const code = window.ikusteEvalingCode;
+    if (code) {
+      const lineno = err.lineNumber !== undefined ? err.lineNumber : err.lineno,
+        hasLine = lineno !== undefined,
+        codeLine = hasLine ? code.split('\n')[lineno] : '';
+
+      if (hasLine) {
+        alert(
+          'error processing ikuste code, at line ' +
+            lineno +
+            ', code at line:\n\n' +
+            codeLine +
+            '\n\nreason: ' +
+            err.message
+        );
+      } else {
+        alert('error processing ikuste code, reason: ' + err);
+      }
+
+      console.error(err);
+    }
+  });
 
   window.addEventListener('load', init);
 })();
